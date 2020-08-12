@@ -1,36 +1,40 @@
-const { readRobotMoveData } = require("./ReadData");
 const { place, turn, move, report } = require("./Robot");
-const Action = require("./Action");
 
-const allActions = () => {
-  let action = new Action();
-  action.setRobotAction("PLACE", place);
-  action.setRobotAction("LEFT", turn);
-  action.setRobotAction("RIGHT", turn);
-  action.setRobotAction("MOVE", move);
-  action.setRobotAction("REPORT", report);
-  return action;
+const readCommand = (robotCommandTxtFile) => {
+  let fs = require("fs");
+  let moveCommandArray = fs
+    .readFileSync(robotCommandTxtFile, "utf8")
+    .toString()
+    .split("\n");
+  console.log(moveCommandArray);
+
+  return moveCommandArray;
 };
 
-const currentSituation = (moveData) => {
-  const allAction = allActions();
+const getAllActions = () => {
+  let allActions = {};
+  allActions["PLACE"] = place;
+  allActions["LEFT"] = turn;
+  allActions["RIGHT"] = turn;
+  allActions["MOVE"] = move;
+  allActions["REPORT"] = report;
+  return allActions;
+};
 
+const readCommandAndTakeActions = (moveCommand) => {
+  const allActions = getAllActions();
   let position = ["INITIAL", "INITIAL", "INITIAL"];
 
-  for (let i = 0; i < moveData.length; i++) {
-    let command = moveData[i].split(" ")[0];
-    let action = allAction.getRobotAction(command);
+  for (let i = 0; i < moveCommand.length; i++) {
+    let command = moveCommand[i].split(" ")[0];
+    let action = allActions[command];
     try {
-      position = action(position, moveData[i]);
+      position = action(position, moveCommand[i]);
     } catch (error) {
       console.log("invalid step");
     }
   }
 };
 
-const robotMoveData = readRobotMoveData("./robotMoveData.txt");
-currentSituation(robotMoveData);
-
-module.exports = {
-  readRobotMoveData,
-};
+const robotCommand = readCommand("./robotMoveCommand.txt");
+readCommandAndTakeActions(robotCommand);
