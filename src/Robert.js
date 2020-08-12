@@ -1,5 +1,3 @@
-var Action = require("./Action");
-
 const place = (position, command) => {
   let [positionX, positionY, facing] = position;
 
@@ -13,10 +11,6 @@ const place = (position, command) => {
     return [positionX, positionY, facing];
   }
   return position;
-};
-
-const getKeyByValue = (object, value) => {
-  return Object.keys(object).find((key) => object[key] === value);
 };
 
 // command = "LEFT" or "RIGHT"
@@ -66,6 +60,10 @@ const report = (position) => {
   return position;
 };
 
+const getKeyByValue = (object, value) => {
+  return Object.keys(object).find((key) => object[key] === value);
+};
+
 const isValidPosition = (positionX, positionY) => {
   const boardRange = [0, 1, 2, 3, 4];
   if (boardRange.includes(positionX) || boardRange.includes(positionY)) {
@@ -74,20 +72,9 @@ const isValidPosition = (positionX, positionY) => {
   return false;
 };
 
-const allActions = () => {
-  let action = new Action();
-  action.setRobotAction("PLACE", place);
-  action.setRobotAction("LEFT", turn);
-  action.setRobotAction("RIGHT", turn);
-  action.setRobotAction("MOVE", move);
-  action.setRobotAction("REPORT", report);
-  return action;
-};
-
 module.exports = {
   place,
   turn,
   move,
   report,
-  allActions,
 };
