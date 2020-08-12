@@ -1,7 +1,7 @@
-const readRobertMoveData = (robertMoveDataTxtFile) => {
+const readRobotMoveData = (robotMoveDataTxtFile) => {
   let fs = require("fs");
   let moveDataArray = fs
-    .readFileSync(robertMoveDataTxtFile, "utf8")
+    .readFileSync(robotMoveDataTxtFile, "utf8")
     .toString()
     .split("\n");
   console.log(moveDataArray);
@@ -10,5 +10,5 @@ const readRobertMoveData = (robertMoveDataTxtFile) => {
 };
 
 module.exports = {
-  readRobertMoveData,
+  readRobotMoveData,
 };

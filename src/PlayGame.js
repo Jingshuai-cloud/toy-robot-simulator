@@ -1,5 +1,5 @@
-const { readRobertMoveData } = require("./ReadData");
-const { place, turn, move, report } = require("./Robert");
+const { readRobotMoveData } = require("./ReadData");
+const { place, turn, move, report } = require("./Robot");
 const Action = require("./Action");
 
 const allActions = () => {
@@ -28,9 +28,9 @@ const currentSituation = (moveData) => {
   }
 };
 
-const robotMoveData = readRobertMoveData("./robertMoveData.txt");
+const robotMoveData = readRobotMoveData("./robotMoveData.txt");
 currentSituation(robotMoveData);
 
 module.exports = {
-  readRobertMoveData,
+  readRobotMoveData,
 };
