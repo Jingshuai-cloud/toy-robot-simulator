@@ -1,14 +1,14 @@
-const { getAllRobotActions } = require("./Robot");
+const { robotActions } = require("./Robot");
 const robotInitialFacing = "INITIAL";
 
 const robotWalkInBoad = (moveCommand) => {
-  const allActions = getAllRobotActions();
+  //const allActions = getAllRobotActions();
   let position = { positionX: 0, positionY: 0, facing: robotInitialFacing };
   let newPosition = { positionX: 0, positionY: 0, facing: robotInitialFacing };
 
   for (let i = 0; i < moveCommand.length; i++) {
     let command = moveCommand[i].split(" ")[0];
-    let action = allActions[command];
+    let action = robotActions[command];
 
     try {
       newPosition = action(position, moveCommand[i]);

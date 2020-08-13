@@ -55,16 +55,14 @@ const report = (position) => {
   return position;
 };
 
-const getAllRobotActions = () => {
-  let allActions = {};
-  allActions["PLACE"] = place;
-  allActions["LEFT"] = turn;
-  allActions["RIGHT"] = turn;
-  allActions["MOVE"] = move;
-  allActions["REPORT"] = report;
-  return allActions;
+const robotActions = {
+  PLACE: place,
+  LEFT: turn,
+  RIGHT: turn,
+  MOVE: move,
+  REPORT: report,
 };
 
 module.exports = {
-  getAllRobotActions,
+  robotActions,
 };
