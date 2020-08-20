@@ -1,39 +1,16 @@
-const { robotActions } = require("./Robot");
-const robotInitialFacing = "INITIAL";
-
-const robotWalkInBoad = (moveCommand) => {
-  //const allActions = getAllRobotActions();
-  let position = { positionX: 0, positionY: 0, facing: robotInitialFacing };
-  let newPosition = { positionX: 0, positionY: 0, facing: robotInitialFacing };
-
-  for (let i = 0; i < moveCommand.length; i++) {
-    let command = moveCommand[i].split(" ")[0];
-    let action = robotActions[command];
-
-    try {
-      newPosition = action(position, moveCommand[i]);
-    } catch (error) {
-      console.log("invalid step");
-    }
-
-    if (isValidPosition(newPosition)) {
-      position = newPosition;
-    }
+module.exports = class Board {
+  constructor(initialSize) {
+    const [x, y] = initialSize;
+    this.boardRange = { X: x - 1, Y: y - 1 };
   }
-  return position;
-};
 
-const isValidPosition = (newPosition) => {
-  const boardRange = [0, 1, 2, 3, 4];
-  if (
-    boardRange.includes(newPosition.positionX) ||
-    boardRange.includes(newPosition.positionY)
-  ) {
-    return true;
+  place(positionX, positionY) {
+    let x = positionX;
+    let y = positionY;
+    x < 0 ? (x = 0) : x;
+    y < 0 ? (y = 0) : y;
+    x > this.boardRange.X ? (x = this.boardRange.X) : x;
+    y > this.boardRange.Y ? (y = this.boardRange.Y) : y;
+    return { X: x, Y: y };
   }
-  return false;
-};
-
-module.exports = {
-  robotWalkInBoad,
 };

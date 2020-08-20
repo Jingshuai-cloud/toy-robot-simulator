@@ -1,13 +1,15 @@
-const readUserCommand = (robotCommandTxtFile) => {
-  let fs = require("fs");
-  let moveCommandArray = fs
-    .readFileSync(robotCommandTxtFile, "utf8")
-    .toString()
-    .split("\n");
+module.exports = class Command {
+  constructor(commandFile) {
+    this.commandFile = commandFile;
+  }
 
-  return moveCommandArray;
-};
+  readUserCommand() {
+    let fs = require("fs");
+    let commandArray = fs
+      .readFileSync(this.commandFile, "utf8")
+      .toString()
+      .split("\n");
 
-module.exports = {
-  readUserCommand,
+    return commandArray;
+  }
 };

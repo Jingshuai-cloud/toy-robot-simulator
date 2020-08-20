@@ -1,68 +1,103 @@
-const robotInitialFacing = "INITIAL";
+module.exports = class Robot {
+  constructor(initialPosition, board) {
+    const [x, y, face] = initialPosition;
+    this.position = { X: x, Y: y, facing: face };
+    this.board = board;
+  }
 
-const place = (position, command) => {
-  moveAction = command.split(",");
-  position.positionX = parseInt(moveAction[0].slice(-1));
-  position.positionY = parseInt(moveAction[1]);
-  position.facing = moveAction[2];
+  place(command) {
+    const moveAction = command.split(",");
+    const newX = parseInt(moveAction[0].slice(-1));
+    const newY = parseInt(moveAction[1]);
+    const newFacing = moveAction[2];
+    const newPosition = { X: newX, Y: newY, facing: newFacing };
 
-  console.log(position);
-  return position;
-};
+    this.position = newPosition;
+    return this.position;
+  }
 
-// command = "LEFT" or "RIGHT"
-const turn = (position, command) => {
-  if (position.facing === robotInitialFacing) return position;
-  const direction = {
-    SOUTH: 0,
-    EAST: 90,
-    NORTH: 180,
-    WEST: 270,
-  };
+  // command = "LEFT" or "RIGHT"
+  turn(direction) {
+    const facing = this.position.facing;
+    if (facing === "INITIAL") return this.position;
 
-  const turn = { LEFT: 90, RIGHT: 270 };
+    const index = {
+      RIGHT: 0,
+      LEFT: 1,
+    };
 
-  let facingDegree = direction[position.facing];
-  let commandDegree = turn[command];
-  let newFacingDegree = facingDegree + commandDegree;
+    const turnIndex = index[direction];
 
-  newFacingDegree = newFacingDegree % 360;
-  let newFacing = getKeyByValue(direction, newFacingDegree);
-  position.facing = newFacing;
-  console.log(position);
-  return position;
-};
+    const nextFace = {
+      NORTH: ["EAST", "WEST"],
+      EAST: ["SOUTH", "NORTH"],
+      SOUTH: ["WEST", "EAST"],
+      WEST: ["NORTH", "SOUTH"],
+    };
 
-const getKeyByValue = (object, value) => {
-  return Object.keys(object).find((key) => object[key] === value);
-};
+    const newFacing = nextFace[facing][turnIndex];
+    this.position = {
+      ...this.position,
+      facing: newFacing,
+    };
 
-const move = (position) => {
-  if (position.facing === robotInitialFacing) return position;
+    return this.position;
+  }
 
-  const moveStep = {
-    x: { SOUTH: 0, EAST: 1, NORTH: 0, WEST: -1 },
-    y: { SOUTH: -1, EAST: 0, NORTH: 1, WEST: 0 },
-  };
-  position.positionX += moveStep.x[position.facing];
-  position.positionY += moveStep.y[position.facing];
-  console.log(position);
-  return position;
-};
+  move() {
+    const facing = this.position.facing;
+    if (facing === "INITIAL") return this.position;
 
-const report = (position) => {
-  console.log(position);
-  return position;
-};
+    const nextStep = {
+      NORTH: { X: 0, Y: 1 },
+      EAST: { X: 1, Y: 0 },
+      SOUTH: { X: 0, Y: -1 },
+      WEST: { X: -1, Y: 0 },
+    };
 
-const robotActions = {
-  PLACE: place,
-  LEFT: turn,
-  RIGHT: turn,
-  MOVE: move,
-  REPORT: report,
-};
+    const nextPosition = nextStep[facing];
+    const newX = this.position.X + nextPosition.X;
+    const newY = this.position.Y + nextPosition.Y;
 
-module.exports = {
-  robotActions,
+    const boardPosition = this.board.place(newX, newY);
+
+    this.position = {
+      ...this.position,
+      X: boardPosition.X,
+      Y: boardPosition.Y,
+    };
+
+    return this.position;
+  }
+
+  report() {
+    console.log(this.position);
+    return this.position;
+  }
+
+  execute(command) {
+    let commandFirstWord = command.split(" ")[0];
+
+    switch (commandFirstWord) {
+      case "PLACE":
+        this.place(command);
+        break;
+
+      case "MOVE":
+        this.move();
+        break;
+
+      case "LEFT":
+      case "RIGHT":
+        this.turn(command);
+        break;
+
+      case "REPORT":
+        this.report();
+        break;
+
+      default:
+        console.log("Wrong Command");
+    }
+  }
 };
