@@ -12,5 +12,4 @@ const commands = new Command(COMMAND_FILE).readUserCommand();
 
 commands.forEach((command) => {
   robot.execute(command);
-  //console.log(robot.position);
 });

@@ -1,25 +1,31 @@
 module.exports = class Robot {
   constructor(initialPosition, board) {
-    const [x, y, face] = initialPosition;
-    this.position = { X: x, Y: y, facing: face };
+    const [x, y, initialFace] = initialPosition;
+    this.initialFace = initialFace;
+    this.position = { X: x, Y: y, facing: initialFace };
     this.board = board;
   }
 
   place(command) {
+    //split command to [place, 3, 4, NORTH]
     const moveAction = command.split(",");
     const newX = parseInt(moveAction[0].slice(-1));
     const newY = parseInt(moveAction[1]);
     const newFacing = moveAction[2];
     const newPosition = { X: newX, Y: newY, facing: newFacing };
 
-    this.position = newPosition;
+    //check with board whether position is valid
+    if (this.checkPosition(newX, newY)) {
+      this.position = newPosition;
+    }
+
     return this.position;
   }
 
   // command = "LEFT" or "RIGHT"
   turn(direction) {
     const facing = this.position.facing;
-    if (facing === "INITIAL") return this.position;
+    if (facing === this.initialFace) return this.position;
 
     const index = {
       RIGHT: 0,
@@ -36,6 +42,7 @@ module.exports = class Robot {
     };
 
     const newFacing = nextFace[facing][turnIndex];
+
     this.position = {
       ...this.position,
       facing: newFacing,
@@ -46,7 +53,7 @@ module.exports = class Robot {
 
   move() {
     const facing = this.position.facing;
-    if (facing === "INITIAL") return this.position;
+    if (facing === this.initialFace) return this.position;
 
     const nextStep = {
       NORTH: { X: 0, Y: 1 },
@@ -55,17 +62,19 @@ module.exports = class Robot {
       WEST: { X: -1, Y: 0 },
     };
 
+    //caculate the next step
     const nextPosition = nextStep[facing];
     const newX = this.position.X + nextPosition.X;
     const newY = this.position.Y + nextPosition.Y;
 
-    const boardPosition = this.board.place(newX, newY);
-
-    this.position = {
-      ...this.position,
-      X: boardPosition.X,
-      Y: boardPosition.Y,
-    };
+    //check with board whether position is valid
+    if (this.checkPosition(newX, newY)) {
+      this.position = {
+        ...this.position,
+        X: newX,
+        Y: newY,
+      };
+    }
 
     return this.position;
   }
@@ -75,7 +84,18 @@ module.exports = class Robot {
     return this.position;
   }
 
+  checkPosition(newX, newY) {
+    const checkX = this.board.getPositionStatus(newX, "X");
+    const checkY = this.board.getPositionStatus(newY, "Y");
+    if (checkX === "VALID" && checkY === "VALID") {
+      return true;
+    }
+    console.log("NOT MOVING, WILL FAILING");
+    return false;
+  }
+
   execute(command) {
+    //Get PLACE from PLACE 3,4,NORTH Command
     let commandFirstWord = command.split(" ")[0];
 
     switch (commandFirstWord) {
@@ -95,7 +115,7 @@ module.exports = class Robot {
       case "REPORT":
         this.report();
         break;
-
+      //Wrong Command
       default:
         console.log("Wrong Command");
     }
