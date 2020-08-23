@@ -1,0 +1,9 @@
+{
+  "devDependencies": {
+    "jest": "^26.4.1"
+  },
+  "scripts": {
+    "test": "jest",
+    "play-game": "node src/index.js"
+  }
+}

@@ -1,21 +1,22 @@
 module.exports = class Robot {
   constructor(initialPosition, board) {
-    const [x, y, initialFace] = initialPosition;
-    this.initialFace = initialFace;
-    this.position = { X: x, Y: y, facing: initialFace };
+    const [x, y, initialFacing] = initialPosition;
+    this.initialFacing = initialFacing;
+    this.position = { X: x, Y: y, facing: initialFacing };
     this.board = board;
   }
 
   place(command) {
-    //split command to [place, 3, 4, NORTH]
-    const moveAction = command.split(",");
-    const newX = parseInt(moveAction[0].slice(-1));
-    const newY = parseInt(moveAction[1]);
-    const newFacing = moveAction[2];
+    //split command to [3, 4, NORTH]
+    const placeCommand = command.split(" ")[1];
+    const placePosition = placeCommand.split(",");
+    const newX = parseInt(placePosition[0]);
+    const newY = parseInt(placePosition[1]);
+    const newFacing = placePosition[2];
     const newPosition = { X: newX, Y: newY, facing: newFacing };
 
     //check with board whether position is valid
-    if (this.checkPosition(newX, newY)) {
+    if (this.board.isBoradPositionValid(newX, newY)) {
       this.position = newPosition;
     }
 
@@ -23,25 +24,25 @@ module.exports = class Robot {
   }
 
   // command = "LEFT" or "RIGHT"
-  turn(direction) {
+  turn(command) {
     const facing = this.position.facing;
-    if (facing === this.initialFace) return this.position;
+    if (facing === this.initialFacing) return this.position;
 
-    const index = {
+    const direction = {
       RIGHT: 0,
       LEFT: 1,
     };
 
-    const turnIndex = index[direction];
+    const turnIndex = direction[command];
 
-    const nextFace = {
+    const nextFacing = {
       NORTH: ["EAST", "WEST"],
       EAST: ["SOUTH", "NORTH"],
       SOUTH: ["WEST", "EAST"],
       WEST: ["NORTH", "SOUTH"],
     };
 
-    const newFacing = nextFace[facing][turnIndex];
+    const newFacing = nextFacing[facing][turnIndex];
 
     this.position = {
       ...this.position,
@@ -53,7 +54,7 @@ module.exports = class Robot {
 
   move() {
     const facing = this.position.facing;
-    if (facing === this.initialFace) return this.position;
+    if (facing === this.initialFacing) return this.position;
 
     const nextStep = {
       NORTH: { X: 0, Y: 1 },
@@ -68,7 +69,7 @@ module.exports = class Robot {
     const newY = this.position.Y + nextPosition.Y;
 
     //check with board whether position is valid
-    if (this.checkPosition(newX, newY)) {
+    if (this.board.isBoradPositionValid(newX, newY)) {
       this.position = {
         ...this.position,
         X: newX,
@@ -82,16 +83,6 @@ module.exports = class Robot {
   report() {
     console.log(this.position);
     return this.position;
-  }
-
-  checkPosition(newX, newY) {
-    const checkX = this.board.getPositionStatus(newX, "X");
-    const checkY = this.board.getPositionStatus(newY, "Y");
-    if (checkX === "VALID" && checkY === "VALID") {
-      return true;
-    }
-    console.log("NOT MOVING, WILL FAILING");
-    return false;
   }
 
   execute(command) {
